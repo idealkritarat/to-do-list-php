@@ -43,14 +43,9 @@ if(file_exists($todoURL)){
                                         <input type="hidden" name="title" value="<?php echo $title ?>">
                                         <input type="checkbox" name="status" class="size-4" <?php echo $task__self['completed'] ? 'checked' : ''?> >
                                     </form>
-                                    <span> <?php echo $title ?></span>
+                                    <span id="title"> <?php echo $title ?></span>
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    <!-- <button class="bg-blue-500 text-white grid grid-flow-col place-items-center p-2 rounded-lg">
-                                        <span class="material-symbols-outlined">
-                                            edit_square
-                                        </span>
-                                    </button> -->
                                     <form action="deleteTask.php" method="post">
                                         <input type="hidden" name="title" value="<?php echo $title ?>">
                                         <button class="bg-red-700 text-white grid grid-flow-col place-items-center p-2 rounded-lg">
