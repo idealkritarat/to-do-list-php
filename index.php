@@ -1,3 +1,14 @@
+<?php
+$todoJSON__arr = [];
+$todoURL = 'to_do_list.json';
+if(file_exists($todoURL)){
+    $todoJSON = file_get_contents($todoURL);
+    $todoJSON__arr = json_decode($todoJSON,true);
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,50 +23,58 @@
     <div class="container mx-auto h-full p-10">
         <div class="h-full w-full flex flex-col gap-3 mx-auto">
             <section>
-                <div class="w-full shadow-xl bg-white p-10 grid grid-rows-2 gap-2 rounded-lg">
-                    <input type="text" placeholder="What do you need to do?" class="border rounded-md py-2 px-4">
+                <form action="newTask.php" method="post" class="w-full shadow-xl bg-white p-10 grid grid-rows-2 gap-2 rounded-lg">
+                    <input name="title" type="text" placeholder="What do you need to do?" class="border rounded-md py-2 px-4">
                     <button class="border border-blue-500 rounded-md text-blue-500 hover:bg-blue-500 hover:text-white flex items-center justify-center gap-2 transition">
                         <span>Add</span>
                         <span class="material-symbols-outlined">
                             add_circle
                         </span>
                     </button>
-                </div>
+                </form>
             </section>
             <section>
                 <ul id="list" class="h-full min-h-[500px] w-full shadow-xl bg-white p-10 rounded-lg flex flex-col gap-6">
-                    <?php 
-                        $file_path = "./to_do_list.json";
-                        $json = file_get_contents($file_path);
-                        $todolist_arr = json_decode($json);
-                        foreach ($todolist_arr as $task) {
-                            echo '
-                            <li class="w-full rounded-md shadow-xl p-5 flex items-center justify-center border">
-                                <div class="flex justify-between items-center w-full">
-                                    <div class="flex items-center gap-3">
-                                        <input type="checkbox" class="size-4" '.($task->Checked ? "checked" : "").'>
-                                        <span> '.$task->title.'</span>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <button class="bg-blue-500 text-white grid grid-flow-col place-items-center p-2 rounded-lg">
-                                            <span class="material-symbols-outlined">
-                                                edit_square
-                                            </span>
-                                        </button>
+                    <?php foreach ($todoJSON__arr as $title => $task__self): ?>
+                        <li class="w-full rounded-md shadow-md p-5 flex items-center justify-center border">
+                            <div class="flex justify-between items-center w-full">
+                                <div class="flex items-center gap-3">
+                                    <form action="checkboxTask.php" method="post">
+                                        <input type="hidden" name="title" value="<?php echo $title ?>">
+                                        <input type="checkbox" name="status" class="size-4" <?php echo $task__self['completed'] ? 'checked' : ''?> >
+                                    </form>
+                                    <span> <?php echo $title ?></span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <!-- <button class="bg-blue-500 text-white grid grid-flow-col place-items-center p-2 rounded-lg">
+                                        <span class="material-symbols-outlined">
+                                            edit_square
+                                        </span>
+                                    </button> -->
+                                    <form action="deleteTask.php" method="post">
+                                        <input type="hidden" name="title" value="<?php echo $title ?>">
                                         <button class="bg-red-700 text-white grid grid-flow-col place-items-center p-2 rounded-lg">
                                             <span class="material-symbols-outlined">
                                                 delete
                                             </span>
                                         </button>
-                                    </div>
+                                    </form>
+                                    
                                 </div>
-                            </li>
-                            ';
-                        }
-                    ?>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
                 </ul>
             </section>
         </div>
     </div>
+    <script>
+        const checkboxes = document.querySelectorAll('input[type=checkbox][name=status]');
+        checkboxes.forEach(ch => {
+            ch.onclick = function (){
+                this.parentNode.submit();
+            }
+        });
+    </script>
 </body>
 </html>
